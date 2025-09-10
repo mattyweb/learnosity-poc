@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from learnosity_sdk.request import Init
 from learnosity_sdk.utils import Uuid
@@ -35,23 +35,31 @@ async def items_assessment():
     # Generate the user ID and session ID as UUIDs
     user_id = Uuid.generate()
     session_id = Uuid.generate()
-    
+    template_id = "NY-activity"
+    # template_id = "react_sdk_primer_activity"
+    activity_id = "quickstart_examples_activity_001"
+
     # Items API configuration parameters
-    items_request = {
+    assessment_config = {
         "user_id": user_id,
-        "activity_template_id": "react_sdk_primer_activity",
         "session_id": session_id,
-        "activity_id": "quickstart_examples_activity_001",
+        "activity_template_id": template_id,
+        "activity_id": activity_id,
         "rendering_type": "assess",
         "type": "submit_practice",
         "name": "Items API Quickstart",
-        "state": "initial"
+        "state": "initial",
+        "config": {
+            "configuration": {
+                "fontsize": "large"
+            }
+        }
     }
     
     # Set up Learnosity initialization data
     init_items = Init(
         "items", security, config.consumer_secret,
-        request=items_request
+        request=assessment_config
     )
     
     generated_request = init_items.generate()

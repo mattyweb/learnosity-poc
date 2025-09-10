@@ -18,3 +18,19 @@ main {
 #learnosity_assess {
   margin-top: 20px;
 }
+
+.lrn_mcq {
+  margin: 40px 0;
+}
+
+.lrn {
+  color: blueviolet;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.lrn-label {
+  text-align: left;
+  color: blueviolet;
+  font-weight: bold;
+  padding-bottom: 500px;
+}
