@@ -1,12 +1,13 @@
 .App {
-  text-align: center;
+  /* text-align: center; */
 }
 
 .App-header {
-  background-color: #282c34;
-  padding: 20px;
+  background-color: #132853;
+  text-align: center;
+  padding: 5px;
   color: white;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 main {
@@ -29,8 +30,6 @@ main {
 }
 
 .lrn-label {
-  text-align: left;
   color: blueviolet;
   font-weight: bold;
-  padding-bottom: 500px;
 }

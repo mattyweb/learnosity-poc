@@ -6,7 +6,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>FastAPI Learnosity Demo</h1>
+        <h1>Learnosity Demo App</h1>
       </header>
       <main>
         <LearnosityAssessment />

@@ -21,14 +21,11 @@ port = 8000
 
 # Public & private security keys required to access Learnosity APIs
 security = {
-    "user_id": "abc",
+    "user_id": "abc", # what is this used for?
     "consumer_key": config.consumer_key,
     "domain": host,
 }
 
-@app.get("/")
-async def home():
-    return {"message": "FastAPI Learnosity Demo", "apis": {"items": "/api/items"}}
 
 @app.get("/api/items")
 async def items_assessment():
@@ -70,9 +67,11 @@ async def items_assessment():
     
     return generated_request
 
+
 def main():
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
 
 if __name__ == "__main__":
     main()

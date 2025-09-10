@@ -97,10 +97,7 @@ const LearnosityAssessment: React.FC = () => {
   }
 
   return (
-    <div>
-      <h2>FastAPI Items API Example</h2>
-      <div id="learnosity_assess"></div>
-    </div>
+    <div id="learnosity_assess"></div>
   );
 };
 
