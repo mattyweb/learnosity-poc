@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 interface LearnosityConfig {
   security: any;
@@ -15,6 +15,7 @@ const LearnosityAssessment: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [learnosityConfig, setLearnosityConfig] = useState<LearnosityConfig | null>(null);
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     const initializeLearnosity = async () => {
@@ -23,8 +24,8 @@ const LearnosityAssessment: React.FC = () => {
       
       for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          // Fetch configuration from FastAPI backend
-          const response = await fetch('http://localhost:8000/api/items');
+          // Fetch configuration from FastAPI backend - using new test endpoint
+          const response = await fetch('http://localhost:8000/api/tests/new');
           if (!response.ok) {
             throw new Error(`HTTP ${response.status}: Failed to fetch Learnosity configuration`);
           }
@@ -58,38 +59,76 @@ const LearnosityAssessment: React.FC = () => {
 
   // Second useEffect to initialize Learnosity after DOM is ready
   useEffect(() => {
-    if (learnosityConfig && !loading) {
-      // Load Learnosity Items API script
+    if (learnosityConfig && !loading && !initializedRef.current) {
+      initializedRef.current = true;
+
+      // Check if Learnosity script is already loaded
+      const existingScript = document.querySelector('script[src*="items.learnosity.com"]');
+
+      if (existingScript) {
+        // Script already exists, just initialize if LearnosityItems is available
+        if (window.LearnosityItems) {
+          try {
+            // Clear any existing assessment first
+            const assessElement = document.getElementById('learnosity_assess');
+            if (assessElement) {
+              assessElement.innerHTML = '';
+            }
+            window.LearnosityItems.init(learnosityConfig);
+          } catch (err) {
+            console.error('Failed to initialize Learnosity:', err);
+            setError('Failed to initialize Learnosity Items API');
+            initializedRef.current = false;
+          }
+        }
+        return;
+      }
+
+      // Load Learnosity Items API script only if not already loaded
       const script = document.createElement('script');
       script.src = 'https://items.learnosity.com/?latest-lts';
       script.async = true;
-      
+
       script.onload = () => {
         // Initialize Items API after script loads and DOM is ready
         if (window.LearnosityItems) {
-          window.LearnosityItems.init(learnosityConfig);
+          try {
+            // Clear any existing assessment first
+            const assessElement = document.getElementById('learnosity_assess');
+            if (assessElement) {
+              assessElement.innerHTML = '';
+            }
+            window.LearnosityItems.init(learnosityConfig);
+          } catch (err) {
+            console.error('Failed to initialize Learnosity:', err);
+            setError('Failed to initialize Learnosity Items API');
+            initializedRef.current = false;
+          }
         } else {
           setError('Failed to load Learnosity Items API');
+          initializedRef.current = false;
         }
       };
-      
+
       script.onerror = () => {
         setError('Failed to load Learnosity script');
+        initializedRef.current = false;
       };
-      
+
       document.head.appendChild(script);
-      
+
       // Cleanup function to remove script on unmount
       return () => {
         if (document.head.contains(script)) {
           document.head.removeChild(script);
         }
+        initializedRef.current = false;
       };
     }
   }, [learnosityConfig, loading]);
 
   if (loading) {
-    return <div>Loading assessment... (Connecting to backend)</div>;
+    return <div>Creating new test... (Generating questions and connecting to backend)</div>;
   }
 
   if (error) {
